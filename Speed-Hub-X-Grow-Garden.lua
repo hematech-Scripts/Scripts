@@ -98,7 +98,7 @@ Title.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 Title.TextStrokeTransparency = 0.7
 Title.ZIndex = 4
 
--- صورة قناة أنيقة في المنتصف
+-- صورة قناة أنيقة في المنتصف - تم إصلاحها
 local ImageContainer = Instance.new("Frame")
 ImageContainer.Parent = MainFrame
 ImageContainer.Size = UDim2.new(0.22, 0, 0.22, 0) -- نسبة 22%
@@ -115,18 +115,14 @@ ImageCorner.CornerRadius = UDim.new(1, 0) -- دائري بالكامل
 
 local Image = Instance.new("ImageLabel")
 Image.Parent = ImageContainer
-Image.Size = UDim2.new(0.95, 0, 0.95, 0)
-Image.Position = UDim2.new(0.025, 0, 0.025, 0)
+Image.Size = UDim2.new(1, 0, 1, 0) -- تغيير من 0.95 إلى 1
+Image.Position = UDim2.new(0, 0, 0, 0) -- تغيير من 0.025 إلى 0
 Image.BackgroundTransparency = 1
 Image.Image = IMAGE_URL
-Image.ScaleType = Enum.ScaleType.Crop
+Image.ScaleType = Enum.ScaleType.Crop -- استخدام Fit بدلاً من Crop إذا كانت الصورة تظهر مقصوصة
 Image.ZIndex = 4
 
-local ImageCorner2 = Instance.new("UICorner")
-ImageCorner2.Parent = Image
-ImageCorner2.CornerRadius = UDim.new(1, 0)
-
--- Channel Name تحت الصورة - واضح جداً
+-- Channel Name تحت الصورة - في المنتصف
 local ChannelContainer = Instance.new("Frame")
 ChannelContainer.Parent = MainFrame
 ChannelContainer.Size = UDim2.new(0.9, 0, 0.08, 0)
@@ -135,28 +131,16 @@ ChannelContainer.AnchorPoint = Vector2.new(0.5, 0.5)
 ChannelContainer.BackgroundTransparency = 1
 ChannelContainer.ZIndex = 3
 
-local ChannelIcon = Instance.new("TextLabel")
-ChannelIcon.Parent = ChannelContainer
-ChannelIcon.Size = UDim2.new(0.1, 0, 1, 0)
-ChannelIcon.Position = UDim2.new(0.05, 0, 0, 0)
-ChannelIcon.BackgroundTransparency = 1
-ChannelIcon.Text = "▶️"
-ChannelIcon.TextSize = 20
-ChannelIcon.Font = Enum.Font.Gotham
-ChannelIcon.TextColor3 = Color3.fromRGB(255, 80, 80)
-ChannelIcon.TextTransparency = 0
-ChannelIcon.ZIndex = 4
-
 local Channel = Instance.new("TextLabel")
 Channel.Parent = ChannelContainer
-Channel.Size = UDim2.new(0.8, 0, 1, 0)
-Channel.Position = UDim2.new(0.15, 0, 0, 0)
+Channel.Size = UDim2.new(1, 0, 1, 0) -- تغيير من 0.8 إلى 1
+Channel.Position = UDim2.new(0, 0, 0, 0) -- تغيير من 0.15 إلى 0
 Channel.BackgroundTransparency = 1
-Channel.Text = CHANNEL_NAME
+Channel.Text = "🎬 " .. CHANNEL_NAME -- إضافة أيقونة
 Channel.Font = Enum.Font.GothamBold
 Channel.TextSize = 24
 Channel.TextColor3 = Color3.fromRGB(240, 240, 240)
-Channel.TextXAlignment = Enum.TextXAlignment.Left
+Channel.TextXAlignment = Enum.TextXAlignment.Center -- تغيير من Left إلى Center
 Channel.TextTransparency = 0
 Channel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 Channel.TextStrokeTransparency = 0.8
@@ -539,5 +523,4 @@ Blur:Destroy()
 --==========================
 --     EXECUTE MAIN SCRIPT
 --==========================
-
 loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
