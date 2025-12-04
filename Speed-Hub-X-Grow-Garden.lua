@@ -6,6 +6,7 @@ local CHANNEL_NAME = "HemaTech_1"
 local CHANNEL_LINK = "https://youtube.com/@hema_tech1?si=G3HLZR7tmOwXdUAl"
 local IMAGE_URL = "https://i.ibb.co/DDjF2c9N/20251003-134219.png"
 local LOADING_TIME = 10 -- seconds
+local SOUND_URL = "rbxassetid://84378944688963" -- ضع هنا ID الصوت (مثال: 131773117)
 
 --==========================
 --     UI CREATOR
@@ -13,6 +14,7 @@ local LOADING_TIME = 10 -- seconds
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 
 -- إنشاء واجهة تأخذ الشاشة كاملة
 local ScreenGui = Instance.new("ScreenGui")
@@ -101,7 +103,7 @@ Title.ZIndex = 4
 -- صورة قناة أنيقة في المنتصف - تم إصلاحها
 local ImageContainer = Instance.new("Frame")
 ImageContainer.Parent = MainFrame
-ImageContainer.Size = UDim2.new(0.22, 0, 0.22, 0) -- نسبة 22%
+ImageContainer.Size = UDim2.new(0.25, 0, 0.25, 0) -- نسبة 25%
 ImageContainer.Position = UDim2.new(0.5, 0, 0.25, 0)
 ImageContainer.AnchorPoint = Vector2.new(0.5, 0.5)
 ImageContainer.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
@@ -113,14 +115,33 @@ local ImageCorner = Instance.new("UICorner")
 ImageCorner.Parent = ImageContainer
 ImageCorner.CornerRadius = UDim.new(1, 0) -- دائري بالكامل
 
+-- استخدام صورة افتراضية إذا فشل تحميل الصورة
 local Image = Instance.new("ImageLabel")
 Image.Parent = ImageContainer
-Image.Size = UDim2.new(1, 0, 1, 0) -- تغيير من 0.95 إلى 1
-Image.Position = UDim2.new(0, 0, 0, 0) -- تغيير من 0.025 إلى 0
-Image.BackgroundTransparency = 1
+Image.Size = UDim2.new(0.95, 0, 0.95, 0)
+Image.Position = UDim2.new(0.025, 0, 0.025, 0)
+Image.BackgroundColor3 = Color3.fromRGB(40, 40, 50) -- خلفية للصورة إذا لم تظهر
+Image.BackgroundTransparency = 0
 Image.Image = IMAGE_URL
-Image.ScaleType = Enum.ScaleType.Crop -- استخدام Fit بدلاً من Crop إذا كانت الصورة تظهر مقصوصة
+Image.ScaleType = Enum.ScaleType.Fit -- تغيير من Crop إلى Fit
 Image.ZIndex = 4
+
+-- إضافة أيقونة بديلة إذا فشلت الصورة
+local ImageIcon = Instance.new("TextLabel")
+ImageIcon.Parent = Image
+ImageIcon.Size = UDim2.new(1, 0, 1, 0)
+ImageIcon.BackgroundTransparency = 1
+ImageIcon.Text = "🎮"
+ImageIcon.TextSize = 50
+ImageIcon.Font = Enum.Font.GothamBold
+ImageIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+ImageIcon.TextTransparency = 0.5
+ImageIcon.Visible = false -- مخفي في البداية
+ImageIcon.ZIndex = 5
+
+local ImageCorner2 = Instance.new("UICorner")
+ImageCorner2.Parent = Image
+ImageCorner2.CornerRadius = UDim.new(1, 0)
 
 -- Channel Name تحت الصورة - في المنتصف
 local ChannelContainer = Instance.new("Frame")
@@ -133,14 +154,14 @@ ChannelContainer.ZIndex = 3
 
 local Channel = Instance.new("TextLabel")
 Channel.Parent = ChannelContainer
-Channel.Size = UDim2.new(1, 0, 1, 0) -- تغيير من 0.8 إلى 1
-Channel.Position = UDim2.new(0, 0, 0, 0) -- تغيير من 0.15 إلى 0
+Channel.Size = UDim2.new(1, 0, 1, 0)
+Channel.Position = UDim2.new(0, 0, 0, 0)
 Channel.BackgroundTransparency = 1
 Channel.Text = "🎬 " .. CHANNEL_NAME -- إضافة أيقونة
 Channel.Font = Enum.Font.GothamBold
 Channel.TextSize = 24
 Channel.TextColor3 = Color3.fromRGB(240, 240, 240)
-Channel.TextXAlignment = Enum.TextXAlignment.Center -- تغيير من Left إلى Center
+Channel.TextXAlignment = Enum.TextXAlignment.Center
 Channel.TextTransparency = 0
 Channel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 Channel.TextStrokeTransparency = 0.8
@@ -273,6 +294,25 @@ LoadingDots.TextTransparency = 0
 LoadingDots.ZIndex = 4
 
 --==========================
+--     SOUND EFFECT
+--==========================
+-- وظيفة تشغيل الصوت
+local function playSound()
+    if SOUND_URL and SOUND_URL ~= "rbxassetid://" then
+        local sound = Instance.new("Sound")
+        sound.Parent = SoundService
+        sound.SoundId = SOUND_URL
+        sound.Volume = 0.5
+        sound:Play()
+        
+        -- تنظيف الصوت بعد انتهائه
+        sound.Ended:Connect(function()
+            sound:Destroy()
+        end)
+    end
+end
+
+--==========================
 --     ANIMATIONS
 --==========================
 
@@ -323,9 +363,17 @@ ImageContainer.Size = UDim2.new(0.1, 0, 0.1, 0)
 local imageTween = TweenService:Create(
     ImageContainer,
     TweenInfo.new(0.8, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
-    {Size = UDim2.new(0.22, 0, 0.22, 0)}
+    {Size = UDim2.new(0.25, 0, 0.25, 0)}
 )
 imageTween:Play()
+
+-- التحقق من ظهور الصورة
+task.wait(1)
+if Image.Image == "" or Image.ImageTransparency == 1 then
+    -- إذا لم تظهر الصورة، عرض الأيقونة البديلة
+    ImageIcon.Visible = true
+    Image.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+end
 
 --==========================
 --     COPY BUTTON مع تأثيرات متطورة
@@ -397,6 +445,9 @@ CopyButton.MouseButton1Click:Connect(function()
     CopyButton.BackgroundColor3 = Color3.fromRGB(80, 255, 80)
     CopyButton.TextColor3 = Color3.fromRGB(0, 0, 0)
     
+    -- تشغيل صوت عند النسخ
+    playSound()
+    
     task.wait(1.5)
     
     -- العودة إلى الحالة الأصلية
@@ -464,6 +515,9 @@ local function updateLoadingProgress()
         connection:Disconnect()
         LoadingText.Text = "✅ READY!"
         LoadingDots.Text = ""
+        
+        -- تشغيل صوت عند اكتمال التحميل
+        playSound()
     end
 end
 
@@ -485,6 +539,9 @@ TimerText.Text = "0.0s"
 ProgressBar.Size = UDim2.new(1, 0, 1, 0)
 
 task.wait(0.5)
+
+-- تشغيل صوت عند تشغيل السكربت
+playSound()
 
 -- إخفاء الإطار الرئيسي
 local frameOutTween = TweenService:Create(
