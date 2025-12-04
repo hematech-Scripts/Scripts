@@ -4,9 +4,8 @@
 local SCRIPT_NAME = "Speed Hub"
 local CHANNEL_NAME = "HemaTech_1"
 local CHANNEL_LINK = "https://youtube.com/@hema_tech1?si=G3HLZR7tmOwXdUAl"
-local IMAGE_URL = "https://i.ibb.co/DDjF2c9N/20251003-134219.png"
 local LOADING_TIME = 10 -- seconds
-local SOUND_URL = "rbxassetid://84378944688963" -- ضع هنا ID الصوت (مثال: 131773117)
+local SOUND_URL = "rbxassetid://84378944688963"
 
 --==========================
 --     UI CREATOR
@@ -16,56 +15,56 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local SoundService = game:GetService("SoundService")
 
--- إنشاء واجهة تأخذ الشاشة كاملة
+-- Create fullscreen interface
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = CoreGui
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ResetOnSpawn = false
 
--- Blur Effect للخلفية
+-- Blur Effect for background
 local Blur = Instance.new("BlurEffect")
 Blur.Parent = game:GetService("Lighting")
 Blur.Size = 0
 Blur.Name = "LoadingBlurEffect"
 
--- إطار خلفية داكنة شفافة فوق Blur
+-- Dark transparent overlay above Blur
 local DarkOverlay = Instance.new("Frame")
 DarkOverlay.Parent = ScreenGui
 DarkOverlay.Size = UDim2.new(1, 0, 1, 0)
 DarkOverlay.Position = UDim2.new(0, 0, 0, 0)
 DarkOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-DarkOverlay.BackgroundTransparency = 0.6 -- شفافية متوسطة
+DarkOverlay.BackgroundTransparency = 0.6
 DarkOverlay.BorderSizePixel = 0
 DarkOverlay.ZIndex = 1
 
--- الإطار الرئيسي (متناسب مع حجم الشاشة)
+-- Main Frame
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0.8, 0, 0.75, 0) -- نسبة 80% عرض، 75% ارتفاع
+MainFrame.Size = UDim2.new(0.75, 0, 0.65, 0)
 MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20) -- خلفية داكنة
-MainFrame.BackgroundTransparency = 0 -- واضح تماماً
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+MainFrame.BackgroundTransparency = 0
 MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
-MainFrame.ZIndex = 2 -- فوق الخلفية
+MainFrame.ZIndex = 2
 
--- إضافة زوايا مدورة
+-- Add rounded corners
 local UICorner = Instance.new("UICorner")
 UICorner.Parent = MainFrame
 UICorner.CornerRadius = UDim.new(0, 15)
 
--- إضافة ظل أنيق
+-- Add elegant shadow
 local UIStroke = Instance.new("UIStroke")
 UIStroke.Parent = MainFrame
 UIStroke.Color = Color3.fromRGB(255, 80, 80)
 UIStroke.Thickness = 3
 UIStroke.Transparency = 0
 
--- Header مع تدرج لوني
+-- Header with gradient
 local Header = Instance.new("Frame")
 Header.Parent = MainFrame
-Header.Size = UDim2.new(1, 0, 0.13, 0) -- نسبة 13% من الارتفاع
+Header.Size = UDim2.new(1, 0, 0.18, 0)
 Header.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
 Header.BorderSizePixel = 0
 Header.BackgroundTransparency = 0
@@ -79,158 +78,131 @@ HeaderGradient.Color = ColorSequence.new({
     ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 50, 50))
 })
 
--- إضافة زوايا مدورة للهيدر
 local HeaderCorner = Instance.new("UICorner")
 HeaderCorner.Parent = Header
 HeaderCorner.CornerRadius = UDim.new(0, 15)
 
--- Title في الهيدر - واضح جداً
+-- Title in header
 local Title = Instance.new("TextLabel")
 Title.Parent = Header
-Title.Size = UDim2.new(0.9, 0, 0.8, 0)
-Title.Position = UDim2.new(0.05, 0, 0.1, 0)
+Title.Size = UDim2.new(1, 0, 0.8, 0)
+Title.Position = UDim2.new(0, 0, 0.1, 0)
 Title.BackgroundTransparency = 1
 Title.Text = SCRIPT_NAME
-Title.TextSize = 32
+Title.TextSize = 36
 Title.Font = Enum.Font.GothamBlack
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.TextXAlignment = Enum.TextXAlignment.Center
 Title.TextTransparency = 0
 Title.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-Title.TextStrokeTransparency = 0.7
+Title.TextStrokeTransparency = 0.5
 Title.ZIndex = 4
 
--- صورة قناة أنيقة في المنتصف - تم إصلاحها
-local ImageContainer = Instance.new("Frame")
-ImageContainer.Parent = MainFrame
-ImageContainer.Size = UDim2.new(0.25, 0, 0.25, 0) -- نسبة 25%
-ImageContainer.Position = UDim2.new(0.5, 0, 0.25, 0)
-ImageContainer.AnchorPoint = Vector2.new(0.5, 0.5)
-ImageContainer.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-ImageContainer.BorderSizePixel = 0
-ImageContainer.BackgroundTransparency = 0
-ImageContainer.ZIndex = 3
-
-local ImageCorner = Instance.new("UICorner")
-ImageCorner.Parent = ImageContainer
-ImageCorner.CornerRadius = UDim.new(1, 0) -- دائري بالكامل
-
--- استخدام صورة افتراضية إذا فشل تحميل الصورة
-local Image = Instance.new("ImageLabel")
-Image.Parent = ImageContainer
-Image.Size = UDim2.new(0.95, 0, 0.95, 0)
-Image.Position = UDim2.new(0.025, 0, 0.025, 0)
-Image.BackgroundColor3 = Color3.fromRGB(40, 40, 50) -- خلفية للصورة إذا لم تظهر
-Image.BackgroundTransparency = 0
-Image.Image = IMAGE_URL
-Image.ScaleType = Enum.ScaleType.Fit -- تغيير من Crop إلى Fit
-Image.ZIndex = 4
-
--- إضافة أيقونة بديلة إذا فشلت الصورة
-local ImageIcon = Instance.new("TextLabel")
-ImageIcon.Parent = Image
-ImageIcon.Size = UDim2.new(1, 0, 1, 0)
-ImageIcon.BackgroundTransparency = 1
-ImageIcon.Text = "🎮"
-ImageIcon.TextSize = 50
-ImageIcon.Font = Enum.Font.GothamBold
-ImageIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-ImageIcon.TextTransparency = 0.5
-ImageIcon.Visible = false -- مخفي في البداية
-ImageIcon.ZIndex = 5
-
-local ImageCorner2 = Instance.new("UICorner")
-ImageCorner2.Parent = Image
-ImageCorner2.CornerRadius = UDim.new(1, 0)
-
--- Channel Name تحت الصورة - في المنتصف
+-- Channel Name with YouTube logo
 local ChannelContainer = Instance.new("Frame")
 ChannelContainer.Parent = MainFrame
-ChannelContainer.Size = UDim2.new(0.9, 0, 0.08, 0)
-ChannelContainer.Position = UDim2.new(0.5, 0, 0.45, 0)
+ChannelContainer.Size = UDim2.new(0.85, 0, 0.15, 0)
+ChannelContainer.Position = UDim2.new(0.5, 0, 0.4, 0)
 ChannelContainer.AnchorPoint = Vector2.new(0.5, 0.5)
 ChannelContainer.BackgroundTransparency = 1
 ChannelContainer.ZIndex = 3
 
+-- YouTube logo close to the name
+local YouTubeIcon = Instance.new("TextLabel")
+YouTubeIcon.Parent = ChannelContainer
+YouTubeIcon.Size = UDim2.new(0.12, 0, 0.8, 0)
+YouTubeIcon.Position = UDim2.new(0.25, 0, 0.1, 0)
+YouTubeIcon.BackgroundTransparency = 1
+YouTubeIcon.Text = "▶"
+YouTubeIcon.TextSize = 35
+YouTubeIcon.Font = Enum.Font.GothamBlack
+YouTubeIcon.TextColor3 = Color3.fromRGB(255, 0, 0) -- YouTube red color
+YouTubeIcon.TextTransparency = 0
+YouTubeIcon.ZIndex = 4
+
+-- Channel name next to YouTube logo
 local Channel = Instance.new("TextLabel")
 Channel.Parent = ChannelContainer
-Channel.Size = UDim2.new(1, 0, 1, 0)
-Channel.Position = UDim2.new(0, 0, 0, 0)
+Channel.Size = UDim2.new(0.7, 0, 0.8, 0)
+Channel.Position = UDim2.new(0.37, 0, 0.1, 0)
 Channel.BackgroundTransparency = 1
-Channel.Text = "🎬 " .. CHANNEL_NAME -- إضافة أيقونة
+Channel.Text = CHANNEL_NAME
 Channel.Font = Enum.Font.GothamBold
-Channel.TextSize = 24
+Channel.TextSize = 28
 Channel.TextColor3 = Color3.fromRGB(240, 240, 240)
-Channel.TextXAlignment = Enum.TextXAlignment.Center
+Channel.TextXAlignment = Enum.TextXAlignment.Left
 Channel.TextTransparency = 0
 Channel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-Channel.TextStrokeTransparency = 0.8
+Channel.TextStrokeTransparency = 0.7
 Channel.ZIndex = 4
 
--- Copy Button كبير وواضح جداً
-local CopyButton = Instance.new("TextButton")
-CopyButton.Parent = MainFrame
-CopyButton.Size = UDim2.new(0.65, 0, 0.12, 0) -- نسبة 65% عرض، 12% ارتفاع
-CopyButton.Position = UDim2.new(0.5, 0, 0.62, 0)
-CopyButton.AnchorPoint = Vector2.new(0.5, 0.5)
-CopyButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-CopyButton.Text = "📋 COPY CHANNEL LINK"
-CopyButton.Font = Enum.Font.GothamBlack
-CopyButton.TextSize = 22
-CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-CopyButton.AutoButtonColor = false
-CopyButton.BackgroundTransparency = 0
-CopyButton.TextTransparency = 0
-CopyButton.ZIndex = 3
+-- Subscribe Button - كلمة Subscribe باللون الأبيض
+local SubscribeButton = Instance.new("TextButton")
+SubscribeButton.Parent = MainFrame
+SubscribeButton.Size = UDim2.new(0.6, 0, 0.14, 0)
+SubscribeButton.Position = UDim2.new(0.5, 0, 0.65, 0)
+SubscribeButton.AnchorPoint = Vector2.new(0.5, 0.5)
+SubscribeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- YouTube red
+SubscribeButton.Text = "🔔 SUBSCRIBE"
+SubscribeButton.Font = Enum.Font.GothamBlack
+SubscribeButton.TextSize = 22
+SubscribeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- نص أبيض
+SubscribeButton.AutoButtonColor = false
+SubscribeButton.BackgroundTransparency = 0
+SubscribeButton.TextTransparency = 0
+SubscribeButton.ZIndex = 3
 
-local CopyButtonCorner = Instance.new("UICorner")
-CopyButtonCorner.Parent = CopyButton
-CopyButtonCorner.CornerRadius = UDim.new(0, 12)
+local SubscribeButtonCorner = Instance.new("UICorner")
+SubscribeButtonCorner.Parent = SubscribeButton
+SubscribeButtonCorner.CornerRadius = UDim.new(0, 10)
 
-local CopyButtonGradient = Instance.new("UIGradient")
-CopyButtonGradient.Parent = CopyButton
-CopyButtonGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 100, 100)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 50, 50))
+local SubscribeButtonGradient = Instance.new("UIGradient")
+SubscribeButtonGradient.Parent = SubscribeButton
+SubscribeButtonGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 60, 60)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 0, 0))
 })
 
--- إضافة تأثير النص للزر
-local CopyButtonStroke = Instance.new("UIStroke")
-CopyButtonStroke.Parent = CopyButton
-CopyButtonStroke.Color = Color3.fromRGB(255, 255, 255)
-CopyButtonStroke.Thickness = 2
-CopyButtonStroke.Transparency = 0.5
+-- Add sound icon on button - باللون الأبيض
+local SoundIcon = Instance.new("TextLabel")
+SoundIcon.Parent = SubscribeButton
+SoundIcon.Size = UDim2.new(0.1, 0, 0.6, 0)
+SoundIcon.Position = UDim2.new(0.05, 0, 0.2, 0)
+SoundIcon.BackgroundTransparency = 1
+SoundIcon.Text = "🔊"
+SoundIcon.TextSize = 14
+SoundIcon.Font = Enum.Font.GothamBold
+SoundIcon.TextColor3 = Color3.fromRGB(255, 255, 255) -- أيقونة صوت بيضاء
+SoundIcon.TextTransparency = 0.3
+SoundIcon.ZIndex = 4
 
--- Status / Loading Bar مع نص التحميل المتغير
+-- Status / Loading Bar
 local StatusContainer = Instance.new("Frame")
 StatusContainer.Parent = MainFrame
 StatusContainer.Size = UDim2.new(0.85, 0, 0.1, 0)
-StatusContainer.Position = UDim2.new(0.5, 0, 0.78, 0)
+StatusContainer.Position = UDim2.new(0.5, 0, 0.9, 0)
 StatusContainer.AnchorPoint = Vector2.new(0.5, 0.5)
 StatusContainer.BackgroundTransparency = 1
 StatusContainer.ZIndex = 3
 
--- نص التحميل المتغير
 local LoadingText = Instance.new("TextLabel")
 LoadingText.Parent = StatusContainer
-LoadingText.Size = UDim2.new(1, 0, 0.4, 0)
+LoadingText.Size = UDim2.new(1, 0, 0.5, 0)
 LoadingText.BackgroundTransparency = 1
-LoadingText.Text = "🔄 INITIALIZING..."
+LoadingText.Text = "Initializing..."
 LoadingText.Font = Enum.Font.GothamBold
-LoadingText.TextSize = 18
+LoadingText.TextSize = 16
 LoadingText.TextColor3 = Color3.fromRGB(220, 220, 220)
 LoadingText.TextXAlignment = Enum.TextXAlignment.Center
 LoadingText.TextTransparency = 0
 LoadingText.ZIndex = 4
 
--- Progress Bar Container
 local ProgressContainer = Instance.new("Frame")
 ProgressContainer.Parent = StatusContainer
 ProgressContainer.Size = UDim2.new(1, 0, 0.5, 0)
-ProgressContainer.Position = UDim2.new(0, 0, 0.45, 0)
+ProgressContainer.Position = UDim2.new(0, 0, 0.5, 0)
 ProgressContainer.BackgroundTransparency = 1
 
--- Progress Bar Background
 local ProgressBarBG = Instance.new("Frame")
 ProgressBarBG.Parent = ProgressContainer
 ProgressBarBG.Size = UDim2.new(0.8, 0, 1, 0)
@@ -244,7 +216,6 @@ local ProgressBarBGCorner = Instance.new("UICorner")
 ProgressBarBGCorner.Parent = ProgressBarBG
 ProgressBarBGCorner.CornerRadius = UDim.new(0, 8)
 
--- Progress Bar Fill
 local ProgressBar = Instance.new("Frame")
 ProgressBar.Parent = ProgressBarBG
 ProgressBar.Size = UDim2.new(0, 0, 1, 0)
@@ -253,19 +224,6 @@ ProgressBar.BorderSizePixel = 0
 ProgressBar.BackgroundTransparency = 0
 ProgressBar.ZIndex = 4
 
-local ProgressBarCorner = Instance.new("UICorner")
-ProgressBarCorner.Parent = ProgressBar
-ProgressBarCorner.CornerRadius = UDim.new(0, 8)
-
-local ProgressBarGradient = Instance.new("UIGradient")
-ProgressBarGradient.Parent = ProgressBar
-ProgressBarGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 120, 120)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 80, 80)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 50, 50))
-})
-
--- مؤشر الوقت المتبقي - واضح جداً
 local TimerText = Instance.new("TextLabel")
 TimerText.Parent = ProgressContainer
 TimerText.Size = UDim2.new(0.15, 0, 1, 0)
@@ -273,41 +231,65 @@ TimerText.Position = UDim2.new(0.95, 0, 0, 0)
 TimerText.BackgroundTransparency = 1
 TimerText.Text = LOADING_TIME .. "s"
 TimerText.Font = Enum.Font.GothamBlack
-TimerText.TextSize = 18
+TimerText.TextSize = 16
 TimerText.TextColor3 = Color3.fromRGB(255, 80, 80)
 TimerText.TextTransparency = 0
 TimerText.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
 TimerText.TextStrokeTransparency = 0.7
 TimerText.ZIndex = 4
 
--- Loading Dots Animation (النقاط المتحركة)
-local LoadingDots = Instance.new("TextLabel")
-LoadingDots.Parent = StatusContainer
-LoadingDots.Size = UDim2.new(0.2, 0, 0.3, 0)
-LoadingDots.Position = UDim2.new(0.9, 0, 0.05, 0)
-LoadingDots.BackgroundTransparency = 1
-LoadingDots.Text = ""
-LoadingDots.Font = Enum.Font.GothamBold
-LoadingDots.TextSize = 24
-LoadingDots.TextColor3 = Color3.fromRGB(255, 80, 80)
-LoadingDots.TextTransparency = 0
-LoadingDots.ZIndex = 4
+--==========================
+--     SOUND SYSTEM
+--==========================
+-- Sound variable
+local mySound = nil
 
---==========================
---     SOUND EFFECT
---==========================
--- وظيفة تشغيل الصوت
-local function playSound()
-    if SOUND_URL and SOUND_URL ~= "rbxassetid://" then
-        local sound = Instance.new("Sound")
-        sound.Parent = SoundService
-        sound.SoundId = SOUND_URL
-        sound.Volume = 0.5
-        sound:Play()
+-- Function to play sound on click
+local function playSubscribeSound()
+    -- Clean previous sound if exists
+    if mySound then
+        mySound:Stop()
+        mySound:Destroy()
+        mySound = nil
+    end
+    
+    -- Create and play sound
+    mySound = Instance.new("Sound")
+    mySound.Parent = SoundService
+    mySound.SoundId = SOUND_URL
+    mySound.Volume = 0.8 -- High volume level
+    mySound.Looped = false
+    
+    -- Try to load and play sound
+    local success, errorMsg = pcall(function()
+        mySound:Load()
+        mySound:Play()
+    end)
+    
+    if not success then
+        warn("Sound error:", errorMsg)
+        if mySound then
+            mySound:Destroy()
+            mySound = nil
+        end
+    else
+        -- Add effect to button when sound plays
+        SoundIcon.Text = "🔊"
+        SoundIcon.TextColor3 = Color3.fromRGB(255, 255, 255) -- أيقونة بيضاء
         
-        -- تنظيف الصوت بعد انتهائه
-        sound.Ended:Connect(function()
-            sound:Destroy()
+        -- Return icon after one second
+        task.wait(1)
+        if SoundIcon then
+            SoundIcon.Text = "🔊"
+            SoundIcon.TextColor3 = Color3.fromRGB(255, 255, 255) -- بيضاء
+        end
+        
+        -- Clean after sound ends
+        mySound.Ended:Connect(function()
+            if mySound then
+                mySound:Destroy()
+                mySound = nil
+            end
         end)
     end
 end
@@ -316,12 +298,12 @@ end
 --     ANIMATIONS
 --==========================
 
--- إخفاء العناصر في البداية للأنيميشن
+-- Hide elements initially
 MainFrame.Position = UDim2.new(0.5, 0, 0.4, 0)
-MainFrame.Size = UDim2.new(0.7, 0, 0.55, 0)
+MainFrame.Size = UDim2.new(0.65, 0, 0.5, 0)
 MainFrame.BackgroundTransparency = 0.8
 
--- أنيميشن ظهور Blur
+-- Blur appearance animation
 local blurTween = TweenService:Create(
     Blur, 
     TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -329,7 +311,7 @@ local blurTween = TweenService:Create(
 )
 blurTween:Play()
 
--- ظهور الخلفية الداكنة
+-- Dark overlay appearance
 local darkTween = TweenService:Create(
     DarkOverlay,
     TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -337,7 +319,7 @@ local darkTween = TweenService:Create(
 )
 darkTween:Play()
 
--- ظهور الإطار الرئيسي
+-- Main frame appearance
 task.wait(0.3)
 
 local frameTween1 = TweenService:Create(
@@ -353,107 +335,109 @@ frameTween1:Play()
 local frameTween2 = TweenService:Create(
     MainFrame,
     TweenInfo.new(0.9, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
-    {Size = UDim2.new(0.8, 0, 0.75, 0)}
+    {Size = UDim2.new(0.75, 0, 0.65, 0)}
 )
 frameTween2:Play()
 
--- ظهور الصورة مع تأثير
+-- YouTube logo appearance with effect
 task.wait(0.4)
-ImageContainer.Size = UDim2.new(0.1, 0, 0.1, 0)
-local imageTween = TweenService:Create(
-    ImageContainer,
-    TweenInfo.new(0.8, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out),
-    {Size = UDim2.new(0.25, 0, 0.25, 0)}
+YouTubeIcon.TextTransparency = 0.5
+YouTubeIcon.Position = UDim2.new(0.2, 0, 0.1, 0)
+local youtubeTween = TweenService:Create(
+    YouTubeIcon,
+    TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+    {
+        TextTransparency = 0,
+        Position = UDim2.new(0.25, 0, 0.1, 0)
+    }
 )
-imageTween:Play()
+youtubeTween:Play()
 
--- التحقق من ظهور الصورة
-task.wait(1)
-if Image.Image == "" or Image.ImageTransparency == 1 then
-    -- إذا لم تظهر الصورة، عرض الأيقونة البديلة
-    ImageIcon.Visible = true
-    Image.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
-end
+-- Channel name appearance
+Channel.TextTransparency = 0.5
+Channel.Position = UDim2.new(0.32, 0, 0.1, 0)
+local channelTween = TweenService:Create(
+    Channel,
+    TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+    {
+        TextTransparency = 0,
+        Position = UDim2.new(0.37, 0, 0.1, 0)
+    }
+)
+channelTween:Play()
 
 --==========================
---     COPY BUTTON مع تأثيرات متطورة
+--     SUBSCRIBE BUTTON with sound effect
 --==========================
-CopyButton.MouseEnter:Connect(function()
+SubscribeButton.MouseEnter:Connect(function()
     local hoverTween = TweenService:Create(
-        CopyButton,
+        SubscribeButton,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         {
-            Size = UDim2.new(0.68, 0, 0.13, 0),
-            BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+            Size = UDim2.new(0.62, 0, 0.15, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 30, 30)
         }
     )
     hoverTween:Play()
     
-    -- تأثير اهتزاز خفيف
-    local shakeTween = TweenService:Create(
-        CopyButton,
-        TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Rotation = 2}
-    )
-    shakeTween:Play()
-    task.wait(0.1)
-    local shakeBackTween = TweenService:Create(
-        CopyButton,
-        TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Rotation = 0}
-    )
-    shakeBackTween:Play()
+    -- Add effect to icon
+    SoundIcon.TextTransparency = 0
 end)
 
-CopyButton.MouseLeave:Connect(function()
+SubscribeButton.MouseLeave:Connect(function()
     local leaveTween = TweenService:Create(
-        CopyButton,
+        SubscribeButton,
         TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
         {
-            Size = UDim2.new(0.65, 0, 0.12, 0),
-            BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+            Size = UDim2.new(0.6, 0, 0.14, 0),
+            BackgroundColor3 = Color3.fromRGB(255, 0, 0)
         }
     )
     leaveTween:Play()
+    
+    -- Restore icon transparency
+    SoundIcon.TextTransparency = 0.3
 end)
 
-CopyButton.MouseButton1Click:Connect(function()
+SubscribeButton.MouseButton1Click:Connect(function()
+    -- Copy channel link
     setclipboard(CHANNEL_LINK)
     
-    -- تأثير النقر
+    -- Save original text
+    local originalText = SubscribeButton.Text
+    
+    -- Change text with click effect - كلمة SUBSCRIBED باللون الأبيض
+    SubscribeButton.Text = "✅ SUBSCRIBED!"
+    SubscribeButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0) -- أخضر
+    SubscribeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- نص أبيض
+    
+    -- Play sound on subscribe
+    playSubscribeSound()
+    
+    -- Button click effect
     local clickTween1 = TweenService:Create(
-        CopyButton,
+        SubscribeButton,
         TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0.63, 0, 0.11, 0)}
+        {Size = UDim2.new(0.58, 0, 0.13, 0)}
     )
     clickTween1:Play()
     
     task.wait(0.1)
     
     local clickTween2 = TweenService:Create(
-        CopyButton,
+        SubscribeButton,
         TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0.65, 0, 0.12, 0)}
+        {Size = UDim2.new(0.6, 0, 0.14, 0)}
     )
     clickTween2:Play()
     
-    -- تغيير النص واللون
-    local originalText = CopyButton.Text
-    local originalColor = CopyButton.BackgroundColor3
-    
-    CopyButton.Text = "✅ COPIED!"
-    CopyButton.BackgroundColor3 = Color3.fromRGB(80, 255, 80)
-    CopyButton.TextColor3 = Color3.fromRGB(0, 0, 0)
-    
-    -- تشغيل صوت عند النسخ
-    playSound()
-    
+    -- Wait a bit
     task.wait(1.5)
     
-    -- العودة إلى الحالة الأصلية
-    CopyButton.Text = originalText
-    CopyButton.BackgroundColor3 = originalColor
-    CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    -- Return to original state - كلمة SUBSCRIBE باللون الأبيض
+    SubscribeButton.Text = originalText
+    SubscribeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0) -- أحمر
+    SubscribeButton.TextColor3 = Color3.fromRGB(255, 255, 255) -- نص أبيض
 end)
 
 --==========================
@@ -462,88 +446,55 @@ end)
 local timeLeft = LOADING_TIME
 local connection
 
--- قائمة نصوص التحميل
 local loadingMessages = {
-    "🔄 INITIALIZING...",
-    "⚙️ LOADING ASSETS...",
-    "🔧 CONFIGURING...",
-    "🚀 PREPARING SCRIPT...",
-    "🎮 ALMOST READY..."
+    "Initializing...",
+    "Loading assets...",
+    "Configuring...",
+    "Preparing script...",
+    "Almost ready..."
 }
 
 local messageIndex = 1
-local dotsAnimation = ""
 
--- وظيفة تحديث النقاط المتحركة
-local function updateLoadingDots()
-    dotsAnimation = dotsAnimation == "..." and "." or dotsAnimation .. "."
-    LoadingDots.Text = dotsAnimation
-end
-
--- وظيفة تغيير نص التحميل
-local function updateLoadingMessage()
-    LoadingText.Text = loadingMessages[messageIndex]
-    messageIndex = messageIndex + 1
-    if messageIndex > #loadingMessages then
-        messageIndex = 1
-    end
-end
-
--- تحديث شريط التقدم مع الوقت
 local function updateLoadingProgress()
     if timeLeft > 0 then
         local pct = 1 - (timeLeft / LOADING_TIME)
         
-        -- تحديث شريط التقدم
         ProgressBar.Size = UDim2.new(pct, 0, 1, 0)
-        
-        -- تحديث مؤشر الوقت
         TimerText.Text = string.format("%.1fs", timeLeft)
         
-        -- تغيير نص التحميل كل 2 ثانية
         if timeLeft % 2 < 0.1 then
-            updateLoadingMessage()
-        end
-        
-        -- تحديث النقاط المتحركة
-        if timeLeft % 0.5 < 0.1 then
-            updateLoadingDots()
+            LoadingText.Text = loadingMessages[messageIndex]
+            messageIndex = messageIndex + 1
+            if messageIndex > #loadingMessages then
+                messageIndex = 1
+            end
         end
         
         timeLeft = timeLeft - 0.1
     else
         connection:Disconnect()
         LoadingText.Text = "✅ READY!"
-        LoadingDots.Text = ""
-        
-        -- تشغيل صوت عند اكتمال التحميل
-        playSound()
     end
 end
 
--- بدء التحديث
 connection = RunService.Heartbeat:Connect(function()
     updateLoadingProgress()
 end)
 
--- الانتظار حتى انتهاء الوقت
 task.wait(LOADING_TIME + 0.5)
 
 --==========================
 --     ANIMATION EXIT
 --==========================
 
--- تحديث النص النهائي
-LoadingText.Text = "🚀 LAUNCHING SCRIPT..."
+LoadingText.Text = "🚀 Launching script..."
 TimerText.Text = "0.0s"
 ProgressBar.Size = UDim2.new(1, 0, 1, 0)
 
 task.wait(0.5)
 
--- تشغيل صوت عند تشغيل السكربت
-playSound()
-
--- إخفاء الإطار الرئيسي
+-- Hide main frame
 local frameOutTween = TweenService:Create(
     MainFrame,
     TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.In),
@@ -554,7 +505,7 @@ local frameOutTween = TweenService:Create(
 )
 frameOutTween:Play()
 
--- إخفاء الخلفية الداكنة
+-- Hide dark overlay
 local darkOutTween = TweenService:Create(
     DarkOverlay,
     TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
@@ -562,7 +513,7 @@ local darkOutTween = TweenService:Create(
 )
 darkOutTween:Play()
 
--- إزالة Blur
+-- Remove Blur
 local blurOutTween = TweenService:Create(
     Blur, 
     TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
@@ -570,12 +521,22 @@ local blurOutTween = TweenService:Create(
 )
 blurOutTween:Play()
 
--- الانتظار حتى اكتمال الأنيميشن
-task.wait(0.8)
+-- Wait a bit
+task.wait(1)
 
--- تنظيف
+-- Clean sound if playing
+if mySound then
+    mySound:Stop()
+    mySound:Destroy()
+    mySound = nil
+end
+
+-- Clean interface
 ScreenGui:Destroy()
 Blur:Destroy()
+
+-- Wait a bit before running script
+task.wait(0.5)
 
 --==========================
 --     EXECUTE MAIN SCRIPT
