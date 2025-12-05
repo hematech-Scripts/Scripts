@@ -1,7 +1,7 @@
 --==========================
 --     CONFIG
 --==========================
-local SCRIPT_NAME = "Speed Hub"
+local SCRIPT_NAME = "Quantum-Onyx"
 local CHANNEL_NAME = "HemaTech_1"
 local CHANNEL_LINK = "https://youtube.com/@hema_tech1?si=G3HLZR7tmOwXdUAl"
 local LOADING_TIME = 10 -- seconds
@@ -541,4 +541,4 @@ task.wait(0.5)
 --==========================
 --     EXECUTE MAIN SCRIPT
 --==========================
-loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Quantum-Onyx-Project-32118"))()
